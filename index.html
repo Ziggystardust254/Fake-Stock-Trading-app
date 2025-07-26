@@ -1,61 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Tell Safari it's a web app -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<!-- Optional: Set a name and icon -->
-<meta name="apple-mobile-web-app-title" content="XDYS Stock App">
-<link rel="apple-touch-icon" href="icon.png"> <!-- Replace with your app icon -->
   <meta charset="UTF-8" />
+  <!-- iOS Fullscreen -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="XDYS Stock App">
+  <link rel="apple-touch-icon" href="icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Fake Stock App</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
     html, body {
-      margin: 0; padding: 0; width: 360px; height: 720px; overflow: hidden;
-      font-family: 'Orbitron', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #000; color: #fff;
-      background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
-      background-size: 10px 10px;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+      font-family: 'Orbitron', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
-    .stock-container { padding: 20px 10px; box-sizing: border-box; }
-    .stock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .stock-name { font-size: 1.5em; font-weight: bold; text-shadow: 0 0 4px rgba(255,255,255,0.3); }
-    .stock-price { font-size: 2em; font-weight: bold; text-shadow: 0 0 4px rgba(0,255,0,0.4); }
-    .price-up { color: #00ff7f; text-shadow: 0 0 6px rgba(0,255,127,0.5); }
-    .price-down { color: #ff4d4d; text-shadow: 0 0 6px rgba(255,77,77,0.5); }
-    canvas { width: 100%; height: 40vh; border-radius: 10px; background: rgba(255,255,255,0.03); margin-bottom: 15px; }
-    .controls { display: flex; justify-content: space-around; margin-bottom: 10px; }
+    .stock-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .stock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .stock-name { font-size: 1.5em; font-weight: bold; }
+    .stock-price { font-size: 2em; font-weight: bold; }
+    .price-up { color: #00ff7f; }
+    .price-down { color: #ff4d4d; }
+    canvas {
+      flex: 1;
+      width: 100%;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      margin-bottom: 15px;
+    }
+    .controls, .trade-table {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 10px;
+    }
     .button {
-      background: linear-gradient(145deg,#1c1c1c,#000); border: 1px solid #444; border-radius: 8px;
-      padding: 6px 10px; font-size: 0.75em; font-family: 'Orbitron'; color: #fff;
-      box-shadow: 0 2px 6px rgba(255,255,255,0.1); cursor: pointer; transition: all .2s ease;
+      flex: 1;
+      margin: 0 5px;
+      padding: 8px;
+      background: linear-gradient(145deg, #1c1c1c, #000);
+      border: 1px solid #444;
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'Orbitron';
+      font-size: 0.9em;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(255,255,255,0.1);
+      cursor: pointer;
     }
-    .button:hover { background: #222; transform: scale(1.05); }
-    .profit-display { text-align: center; font-size: 1em; font-family: 'Orbitron'; margin-bottom: 5px; }
-    .trade-table {
-      background: linear-gradient(145deg,#1c1c1c,#000); border-radius: 8px;
-      padding: 10px; display: flex; justify-content: space-around; margin-bottom: 10px;
+    .button:hover { background: #222; }
+    .profit-display {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 1em;
+      font-family: 'Orbitron';
     }
     .bottom-pattern {
-      flex: 1; width: 100%; background-image: repeating-linear-gradient(
-        45deg, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 5px
-      ); border-radius: 10px; margin-top: 10px; text-align: center; padding: 8px 0;
-      font-family: 'Orbitron'; font-size: 0.85em; color: #aaa;
+      height: 40px;
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.05) 0,
+        rgba(255,255,255,0.05) 1px,
+        transparent 1px,
+        transparent 5px
+      );
+      border-radius: 8px;
+      text-align: center;
+      padding-top: 10px;
+      font-family: 'Orbitron';
+      font-size: 0.85em;
+      color: #aaa;
     }
-    .bottom-pattern b { color: #fff; }
-    .top-bar, .bottom-bar {
-      width: 100%; display: flex; justify-content: space-between; padding: 5px 10px;
-      color: #ccc; font-size: 0.8em;
-    }
-    .bottom-bar { position: absolute; bottom: 0; background: rgba(0,0,0,0.8); }
   </style>
 </head>
 <body>
-  <div class="top-bar"><span>9:41</span><span>Wi‑Fi 🔋</span></div>
   <div class="stock-container">
     <div class="stock-header">
       <div class="stock-name">$XDYS</div>
@@ -75,111 +109,108 @@
     </div>
     <div class="bottom-pattern" id="positionInfo"></div>
   </div>
-  <div class="bottom-bar"><span>Stocks</span><span>Search</span><span>Recents</span><span>Settings</span></div>
   <script>
-    const canvas = document.getElementById('chart'), ctx = canvas.getContext('2d');
-    let startingPrice = 167.4, price = startingPrice;
-    let history = Array(100).fill(price), entryPrice = null, entryQty = 0, mode = null;
-    const priceEl = document.getElementById('price'), profitDisplay = document.getElementById('profitDisplay');
+    // Restore original JS logic for stock chart and controls.
+    const canvas = document.getElementById('chart');
+    const ctx = canvas.getContext('2d');
+    function resize() { canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight; }
+    window.addEventListener('resize', resize);
+    resize();
+    let startingPrice = 167.4;
+    let price = startingPrice;
+    let history = Array(100).fill(price);
+    let entryPrice = null;
+    let entryQty = 0;
+    let mode = null;
+    const priceEl = document.getElementById('price');
+    const profitDisplay = document.getElementById('profitDisplay');
     const positionInfo = document.getElementById('positionInfo');
-
-    function resizeCanvas(){ canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight; }
-    window.addEventListener('resize', resizeCanvas); resizeCanvas();
-
     function updatePositionInfo() {
       if (entryQty > 0) {
-        if (mode === 'buy') {
-          positionInfo.innerHTML = `You own <b>${entryQty}</b> shares of EXODYS.`;
-        } else if (mode === 'puts') {
-          positionInfo.innerHTML = `You have bet against EXODYS stock with <b>${entryQty}</b> puts.`;
-        }
-      } else {
-        positionInfo.innerHTML = "";
-      }
+        if (mode === 'buy') positionInfo.innerHTML = `You own <b>${entryQty}</b> shares of EXODYS.`;
+        else positionInfo.innerHTML = `You have bet against EXODYS stock with <b>${entryQty}</b> puts.`;
+      } else positionInfo.innerHTML = '';
     }
-
     document.getElementById('btnTradeBuy').onclick = () => {
-      if (mode !== 'buy') {
-        entryPrice = price;
-        entryQty = 0;
-        mode = 'buy';
-      }
+      if (mode !== 'buy') { entryPrice = price; entryQty = 0; mode = 'buy'; }
       entryQty += 10000;
       updatePositionInfo();
     };
-
     document.getElementById('btnTradePuts').onclick = () => {
-      if (mode !== 'puts') {
-        entryPrice = price;
-        entryQty = 0;
-        mode = 'puts';
-      }
+      if (mode !== 'puts') { entryPrice = price; entryQty = 0; mode = 'puts'; }
       entryQty += 10000;
       updatePositionInfo();
     };
-
     document.getElementById('btnTradeSell').onclick = () => {
-      if(entryPrice != null) {
+      if (entryPrice != null) {
         let profit = mode === 'puts' ? (entryPrice - price) * entryQty : (price - entryPrice) * entryQty;
         profitDisplay.textContent = `Profit: $${profit.toFixed(2)}`;
         profitDisplay.style.color = profit < 0 ? '#ff4d4d' : '#00ff7f';
-        entryPrice = null; entryQty = 0; mode = null; updatePositionInfo();
+        entryPrice = null; entryQty = 0; mode = null;
+        updatePositionInfo();
       }
     };
-
     ['btn1D','btn1W','btn1M'].forEach(id => document.getElementById(id).onclick = () => {});
-
-    let lastTap = 0; let touchDir = 0, touchMult = 1;
+    let lastTap = 0, touchDir = 0, touchMult = 1;
     document.addEventListener('touchstart', e => {
-      const t = e.touches[0]; const now = Date.now(); const dt = now - lastTap; const isDouble = dt < 300;
+      const t = e.touches[0];
+      const now = Date.now();
+      const isDouble = now - lastTap < 300;
       lastTap = now;
-      const x = t.clientX; const w = window.innerWidth;
-      touchDir = x > w/2 ? 1 : -1; touchMult = isDouble ? 2 : 1;
-    });
-
-    let keyState = {};
-    document.addEventListener('keydown', e => keyState[e.key] = true);
-    document.addEventListener('keyup', e => keyState[e.key] = false);
-
-    function updateStock() {
-      let direction;
-      if(touchDir !== 0) { direction = touchDir * (touchMult * 3); }
-      else if(keyState['ArrowUp'] || keyState['ArrowDown']){
-        const base = keyState['Shift'] ? 6 : 3;
-        direction = keyState['ArrowUp'] ? base : -base;
+      const x = t.clientX;
+      const y = t.clientY;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      // Bottom-left quadrant: force down, Top-right quadrant: force up
+      if (x < w/2 && y > h/2) {
+        touchDir = -1;
+        touchMult = isDouble ? 2 : 1;
+      } else if (x > w/2 && y < h/2) {
+        touchDir = 1;
+        touchMult = isDouble ? 2 : 1;
       } else {
-        direction = (Math.random() < 0.5 ? 1 : -1) * (Math.random() * 1.2 + 0.5);
+        touchDir = 0;
+        touchMult = 1;
       }
-      let change = direction * (Math.random() * 0.4 + 0.1);
+    });
+      const isDouble = now - lastTap < 300;
+      lastTap = now;
+      touchDir = touch.clientX > window.innerWidth/2 ? 1 : -1;
+      touchMult = isDouble ? 2 : 1;
+    });
+    let keys = {};
+    document.addEventListener('keydown', e => keys[e.key] = true);
+    document.addEventListener('keyup', e => keys[e.key] = false);
+    function updateStock() {
+      let dir;
+      if (touchDir) dir = touchDir * (touchMult * 3);
+      else if (keys['ArrowUp']||keys['ArrowDown']) dir = keys['ArrowUp'] ? (keys['Shift']?6:3) : -(keys['Shift']?6:3);
+      else dir = (Math.random()<0.5?1:-1)*(Math.random()*1.2+0.5);
+      let change = dir * (Math.random()*0.4+0.1);
       price = Math.max(1, price + change);
       priceEl.textContent = `$${price.toFixed(2)}`;
-      priceEl.className = `stock-price ${change >= 0 ? 'price-up' : 'price-down'}`;
-      if(entryPrice != null){
-        let profit = mode==='puts' ? (entryPrice-price)*entryQty : (price-entryPrice)*entryQty;
-        profitDisplay.textContent = `Profit: $${profit.toFixed(2)}`;
-        profitDisplay.style.color = profit<0?'#ff4d4d':'#00ff7f';
-      }
-      history.push(price); if(history.length>100) history.shift(); drawChart();
-      touchDir=0; touchMult=1;
+      priceEl.className = `stock-price ${change>=0?'price-up':'price-down'}`;
+      if (entryPrice != null) updatePositionInfo();
+      history.push(price);
+      if (history.length>100) history.shift();
+      drawChart();
+      touchDir = 0; touchMult = 1;
     }
-
     function drawChart() {
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      let max=Math.max(...history,startingPrice), min=Math.min(...history,startingPrice);
-      let range=max-min||1, pad=10;
-      let y0=canvas.height-((startingPrice-min)/range)*(canvas.height-2*pad)-pad;
-      ctx.strokeStyle='#888'; ctx.setLineDash([5,3]); ctx.beginPath(); ctx.moveTo(0,y0); ctx.lineTo(canvas.width,y0); ctx.stroke(); ctx.setLineDash([]);
+      const max = Math.max(...history, startingPrice);
+      const min = Math.min(...history, startingPrice);
+      const range = max-min||1;
+      const padding = 10;
+      const y0 = canvas.height - ((startingPrice-min)/range)*(canvas.height-2*padding) - padding;
+      ctx.setLineDash([5,3]); ctx.strokeStyle='#888'; ctx.beginPath(); ctx.moveTo(0,y0); ctx.lineTo(canvas.width,y0); ctx.stroke(); ctx.setLineDash([]);
       ctx.fillStyle='#888'; ctx.font='10px sans-serif';
-      for(let i=0;i<=4;i++){ let y=pad+i*((canvas.height-2*pad)/4), v=max-i*(range/4); ctx.fillText(`$${v.toFixed(2)}`,0,y);} 
-      for(let i=0;i<=5;i++){ let x=i*(canvas.width/5); ctx.fillText(`${i*5+10}:00`,x,canvas.height-5);} 
-      ctx.beginPath(); history.forEach((v,i)=>{ let x=(i/(history.length-1))*canvas.width;
-        let y=canvas.height-((v-min)/range)*(canvas.height-2*pad)-pad;
-        i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-      });
-      let rc=history[history.length-1]-history[history.length-5]||0;
-      ctx.strokeStyle=rc< -2?'#ff4d4d':'#00ffcc'; ctx.lineWidth=2; ctx.shadowColor=ctx.strokeStyle; ctx.shadowBlur=10; ctx.stroke(); ctx.shadowBlur=0;
+      for(let i=0;i<=4;i++){ const y=padding+i*((canvas.height-2*padding)/4); const v=max-i*(range/4); ctx.fillText(`$${v.toFixed(2)}`,0,y); }
+      for(let i=0;i<=5;i++){ const x=i*(canvas.width/5); ctx.fillText(`${i*5+10}:00`,x,canvas.height-5); }
+      ctx.beginPath(); history.forEach((v,i)=>{ const x=(i/(history.length-1))*canvas.width; const y=canvas.height-((v-min)/range)*(canvas.height-2*padding)-padding; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+      const recent = history[history.length-1]-history[history.length-5]||0;
+      ctx.strokeStyle=recent<-2?'#ff4d4d':'#0cc'; ctx.lineWidth=2; ctx.shadowColor=ctx.strokeStyle; ctx.shadowBlur=10; ctx.stroke(); ctx.shadowBlur=0;
     }
-
     setInterval(updateStock, 500);
   </script>
 </body>
