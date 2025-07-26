@@ -159,6 +159,24 @@
       const y = t.clientY;
       const w = window.innerWidth;
       const h = window.innerHeight;
+      // Right side: top-right for up, bottom-right for down
+      if (x > w/2 && y < h/2) {
+        touchDir = 1;
+        touchMult = isDouble ? 2 : 1;
+      } else if (x > w/2 && y > h/2) {
+        touchDir = -1;
+        touchMult = isDouble ? 2 : 1;
+      } else {
+        touchDir = 0;
+        touchMult = 1;
+      }
+    });
+      const isDouble = now - lastTap < 300;
+      lastTap = now;
+      const x = t.clientX;
+      const y = t.clientY;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
       // Only left side: bottom-left for down, top-left for up
       if (x < w/2 && y > h/2) {
         touchDir = -1;
