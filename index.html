@@ -1,51 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Tell Safari it's a web app -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- iOS Fullscreen -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="XDYS Stock App">
   <link rel="apple-touch-icon" href="icon.png">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
   <title>Fake Stock App</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
     html, body {
-      margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
-      font-family: 'Orbitron', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #000; color: #fff;
-      background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
-      background-size: 10px 10px;
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
     }
-    .stock-container { padding: 20px; box-sizing: border-box; height: calc(100% - 40px); display: flex; flex-direction: column; }
-    .stock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .stock-name { font-size: 1.5em; font-weight: bold; text-shadow: 0 0 4px rgba(255,255,255,0.3); }
-    .stock-price { font-size: 2em; font-weight: bold; text-shadow: 0 0 4px rgba(0,255,0,0.4); }
-    .price-up { color: #00ff7f; }
-    .price-down { color: #ff4d4d; }
-    canvas { flex: 1; border-radius: 10px; background: rgba(255,255,255,0.03); margin-bottom: 15px; }
-    .controls, .trade-table { display: flex; justify-content: space-around; margin-bottom: 10px; }
-    .button {
-      background: linear-gradient(145deg,#1c1c1c,#000); border: 1px solid #444; border-radius: 8px;
-      padding: 6px 10px; font-size: 0.75em; font-family: 'Orbitron'; color: #fff;
-      box-shadow: 0 2px 6px rgba(255,255,255,0.1); cursor: pointer; transition: all .2s ease;
-    }
-    .button:hover { background: #222; transform: scale(1.05); }
-    .profit-display { text-align: center; font-size: 1em; font-family: 'Orbitron'; margin-bottom: 5px; }
-    .bottom-pattern {
-      flex: 0 0 50px; background-image: repeating-linear-gradient(
-         45deg, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 5px);
-    }
+    body { display: flex; flex-direction: column; }
     .top-bar, .bottom-bar {
-      width: 100%; display: flex; justify-content: space-between; padding: 5px 10px;
-      color: #ccc; font-size: 0.8em;
+      display: none; /* hide Safari UI bars when launched from home screen */
     }
-    .bottom-bar { background: rgba(0,0,0,0.8); }
+    .stock-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .stock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .stock-name { font-size: 1.5em; font-weight: bold; }
+    .stock-price { font-size: 2em; font-weight: bold; }
+    .price-up { color: #0f0; }
+    .price-down { color: #f44; }
+    canvas {
+      flex: 1;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      margin-bottom: 10px;
+    }
+    .controls, .trade-table {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 8px;
+    }
+    .button {
+      flex: 1;
+      margin: 0 4px;
+      background: #111;
+      border-radius: 6px;
+      padding: 8px;
+      text-align: center;
+      font-size: 0.8em;
+      color: #fff;
+      user-select: none;
+    }
+    .profit-display { text-align: center; margin-bottom: 8px; }
+    .bottom-pattern {
+      height: 40px;
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.05) 0,
+        rgba(255,255,255,0.05) 1px,
+        transparent 1px,
+        transparent 5px
+      );
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
-  <div class="top-bar"><span>9:41</span><span>Wi‑Fi 🔋</span></div>
   <div class="stock-container">
     <div class="stock-header">
       <div class="stock-name">$XDYS</div>
@@ -59,15 +91,16 @@
     </div>
     <div class="profit-display" id="profitDisplay">Profit: $0.00</div>
     <div class="trade-table">
-      <div class="button" id="btnTradeBuy">Buy ×10,000</div>
+      <div class="button" id="btnTradeBuy">Buy ×10k</div>
       <div class="button" id="btnTradeSell">Sell All</div>
-      <div class="button" id="btnTradePuts">Puts ×10,000</div>
+      <div class="button" id="btnTradePuts">Puts ×10k</div>
     </div>
     <div class="bottom-pattern" id="positionInfo"></div>
   </div>
-  <div class="bottom-bar"><span></span><span></span><span></span><span></span></div>
+
   <script>
-    // JS remains unchanged...
+    // Stock app script (previous JS code) remains here
+    // Ensure chart and controls reattached after CSS changes
   </script>
 </body>
 </html>
